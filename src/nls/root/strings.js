@@ -378,6 +378,7 @@ define({
     "CMD_ADD_NEXT_MATCH"                  : "Add Next Match to Selection",
     "CMD_SKIP_CURRENT_MATCH"              : "Skip and Add Next Match",
     "CMD_FIND_IN_FILES"                   : "Find in Files",
+    "CMD_FIND_IN_SELECTION"		  : "Find in Selection",
     "CMD_FIND_IN_SUBTREE"                 : "Find in\u2026",
     "CMD_REPLACE"                         : "Replace",
     "CMD_REPLACE_IN_FILES"                : "Replace in Files",

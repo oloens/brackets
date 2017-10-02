@@ -159,6 +159,9 @@
     "cmd.find":  [
         "Ctrl-F"
     ],
+    "cmd.findInSelection": [
+        "Ctrl-Alt-F"
+    ],
     "cmd.findInFiles":  [
         "Ctrl-Shift-F"
     ],

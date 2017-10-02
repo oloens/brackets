@@ -654,6 +654,7 @@ define(function (require, exports, module) {
 
         openSearchBar(editor, false);
     }
+    
 
 
     /**
@@ -721,12 +722,128 @@ define(function (require, exports, module) {
             doSearch(editor, false);
         }
     }
-
-    function _findNext() {
+    function _funktionsNamn() {     
         var editor = EditorManager.getActiveEditor();
         if (editor) {
-            doSearch(editor);
+            clearSearch(editor._codeMirror);
+            doSearchInSelection(editor);
         }
+    }
+    function doSearchInSelection(editor) {
+         var cm = editor._codeMirror;
+         var state = getSearchState(cm);
+         if (findBar) {
+            findBar.close();
+        }
+
+        // Create the search bar UI (closing any previous find bar in the process)
+        findBar = new FindBar({
+            multifile: false,
+            replace: false,
+            initialQuery: "",
+            initialReplaceText: "",
+            queryPlaceholder: "Find in selection..."
+        });
+        findBar.open();
+        
+         findBar
+            .on("queryChange.FindReplace", function (e) {
+                findInSelection(editor);
+            })
+            .on("doFind.FindReplace", function (e, searchBackwards) {
+                test1(searchBackwards);
+            })
+            .on("close.FindReplace", function (e) {
+                clearHighlights(cm, state);
+         });
+    }
+    function findInSelection(editor) {
+        
+        var selectedText = editor.getSelectedText();
+        var selection = editor.getSelection();
+        
+        var cm = editor._codeMirror;
+        var state = getSearchState(cm);
+        
+        clearSearch(cm);
+        clearHighlights(cm, state);
+        
+        
+        
+        
+        var start = selection.start;
+        var end = selection.end;
+        var from = start;
+        var to = {line: start.line, ch: start.ch + 3};
+        var lineOffset = 0;
+        var lines = selectedText.split("\n");
+        var index;
+        var charOffset = 0;
+        var queryInfo = findBar.getQueryInfo();
+        var queryStr = queryInfo.query.trim();
+        if (queryStr === "") {
+            return;
+        }
+        lines.forEach(function(line) {
+            while(index !== -1) {
+                
+                if (queryInfo.isCaseSensitive) {
+                    index = line.search(queryStr);
+                }
+                else {
+                    index = line.search(new RegExp(queryStr, "i"));
+                }
+                
+                if (index !== -1) {
+                    state.resultSet.push({line:from.line + lineOffset, ch: lineOffset===0 ? from.ch + index + charOffset : index + charOffset});
+                    
+                    line = line.substring(index+queryStr.length);
+                    charOffset += index + queryStr.length;
+                }
+                
+                
+            }
+            lineOffset+=1;
+            charOffset=0;
+            index=0;
+        });
+        
+        state.resultSet.forEach(function(pos) {
+             state.marked.push(cm.markText({line: pos.line, ch: pos.ch}, {line: pos.line, ch: pos.ch + queryStr.length},
+                             { className: "CodeMirror-searching", startStyle: "searching-first", endStyle: "searching-last" }));
+        });
+        }
+    function test1(searchBackwards) {
+        var cm = EditorManager.getActiveEditor()._codeMirror;
+        var state = getSearchState(cm);
+        clearCurrentMatchHighlight(cm, state);
+        
+        var queryStr = findBar.getQueryInfo().query;
+        if (searchBackwards) {
+            state.matchIndex -= 1;
+        }
+        else {
+            state.matchIndex += 1;
+        }
+        if (state.matchIndex >= state.marked.length) {
+            state.matchIndex = 0;
+        }
+        else if (state.matchIndex < 0) {
+            state.matchIndex = state.marked.length - 1;
+        }
+        var pos = state.resultSet[state.matchIndex];
+        state.markedCurrent = cm.markText({line: pos.line, ch: pos.ch}, {line: pos.line, ch: pos.ch + queryStr.length},
+                             { className: "searching-current-match", startStyle: "searching-first", endStyle: "searching-last" });
+        
+    }
+    
+    
+    
+    function _findNext() {
+            var editor = EditorManager.getActiveEditor();
+            if (editor) {
+                doSearch(editor);
+            }
     }
 
     function _findPrevious() {
@@ -746,6 +863,8 @@ define(function (require, exports, module) {
     MainViewManager.on("currentFileChange", _handleFileChanged);
 
     CommandManager.register(Strings.CMD_FIND,                   Commands.CMD_FIND,                  _launchFind);
+     CommandManager.register("Find in selection",
+    Commands.CMD_FIND_IN_SELECTION,   _funktionsNamn);
     CommandManager.register(Strings.CMD_FIND_NEXT,              Commands.CMD_FIND_NEXT,             _findNext);
     CommandManager.register(Strings.CMD_REPLACE,                Commands.CMD_REPLACE,               _replace);
     CommandManager.register(Strings.CMD_FIND_PREVIOUS,          Commands.CMD_FIND_PREVIOUS,         _findPrevious);

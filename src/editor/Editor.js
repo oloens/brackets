@@ -1424,6 +1424,15 @@ define(function (require, exports, module) {
             return this.document.getRange(sel.start, sel.end);
         }
     };
+    
+    Editor.prototype.getSelectedText2 = function (allSelections) {
+        if (allSelections) {
+            return this._codeMirror.getSelection();
+        } else {
+            var sel = this.getSelection();
+            return {start: sel.start, end:sel.end};
+        }
+    };
 
     /**
      * Sets the current selection. Start is inclusive, end is exclusive. Places the cursor at the
