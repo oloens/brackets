@@ -791,7 +791,9 @@ define(function (require, exports, module) {
                     index = line.search(queryStr);
                 }
                 else {
-                    index = line.search(new RegExp(queryStr, "i"));
+                    line = line.toUpperCase();
+                    queryStr = queryStr.toUpperCase();
+                    index = line.search(queryStr);
                 }
                 
                 if (index !== -1) {
