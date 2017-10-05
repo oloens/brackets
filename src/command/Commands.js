@@ -88,7 +88,7 @@ define(function (require, exports, module) {
     // FIND
     exports.CMD_FIND                    = "cmd.find";                   // FindReplace.js               _launchFind()
     exports.CMD_FIND_IN_SELECTION       = "cmd.findInSelection";
-        // FindReplace.js               _funktionsNamn()
+        // FindReplace.js               _findInSelection()
     exports.CMD_FIND_IN_FILES           = "cmd.findInFiles";            // FindInFilesUI.js             _showFindBar()
     exports.CMD_FIND_IN_SUBTREE         = "cmd.findInSubtree";          // FindInFilesUI.js             _showFindBarForSubtree()
     exports.CMD_FIND_NEXT               = "cmd.findNext";               // FindReplace.js               _findNext()

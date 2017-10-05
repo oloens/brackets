@@ -722,7 +722,7 @@ define(function (require, exports, module) {
             doSearch(editor, false);
         }
     }
-    function _funktionsNamn() {     
+    function _findInSelection() {     
         var editor = EditorManager.getActiveEditor();
         if (editor) {
             clearSearch(editor._codeMirror);
@@ -866,7 +866,7 @@ define(function (require, exports, module) {
 
     CommandManager.register(Strings.CMD_FIND,                   Commands.CMD_FIND,                  _launchFind);
      CommandManager.register("Find in selection",
-    Commands.CMD_FIND_IN_SELECTION,   _funktionsNamn);
+    Commands.CMD_FIND_IN_SELECTION,   _findInSelection);
     CommandManager.register(Strings.CMD_FIND_NEXT,              Commands.CMD_FIND_NEXT,             _findNext);
     CommandManager.register(Strings.CMD_REPLACE,                Commands.CMD_REPLACE,               _replace);
     CommandManager.register(Strings.CMD_FIND_PREVIOUS,          Commands.CMD_FIND_PREVIOUS,         _findPrevious);
